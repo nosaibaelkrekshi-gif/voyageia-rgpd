@@ -1,0 +1,10 @@
+# Base de données locale : elle contient des données d'utilisateurs,
+# même pseudonymisées, elle ne doit jamais être publiée (RGPD)
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
