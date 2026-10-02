@@ -1,1 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoyageIA – Recommandation de voyages conforme au RGPD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-size: 16px; /* Base pour l'accessibilité */
+            transition: background 0.5s;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            transition: background 0.5s, box-shadow 0.5s;
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .stats-bar {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            margin: 5px;
+        }
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1a472a;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #2c5f2d;
+        }
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .info-box p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        .consent-section {
+            background: #fff9e6;
+            border: 2px solid #ffd700;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .consent-section h3 {
+            color: #d4a017;
+            margin-bottom: 15px;
+        }
+        .consent-checkbox {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .consent-checkbox input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, background 0.3s;
+            font-weight: 600;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .result h2 {
+            color: #2c5f2d;
+            margin-bottom: 15px;
+        }
+        .result p {
+            font-size: 1.8em;
+            color: #1a472a;
+            font-weight: bold;
+        }
+        .rights-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .rights-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .rights-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .small-btn {
+            padding: 10px 20px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            flex-grow: 1;
+            transition: background 0.3s;
+        }
+        .small-btn:hover {
+            background: #667eea;
+        }
+        .error {
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: white; 
+            font-size: 0.9em;
+        }
+        .accessibility-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .accessibility-controls button {
+            margin: 5px;
+            padding: 8px 15px;
+            border: 1px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Contraste Élevé */
+        body.high-contrast {
+            background: black;
+            color: white;
+        }
+        .high-contrast .container {
+            background: #333;
+            color: white;
+            box-shadow: 0 0 10px yellow;
+        }
+        .high-contrast h1, .high-contrast h3 {
+            color: yellow !important;
+        }
+        .high-contrast .subtitle, .high-contrast .info-box p {
+            color: white;
+        }
+        .high-contrast .stats-bar {
+            background: black;
+            border: 2px solid yellow;
+        }
+        .high-contrast .stat-number {
+            color: yellow;
+        }
+        .high-contrast .stat-label {
+            color: white;
+        }
+        .high-contrast .info-box {
+            background: #222;
+            border-left-color: yellow;
+        }
+        .high-contrast .consent-section {
+            background: #222;
+            border-color: yellow;
+        }
+        .high-contrast select, .high-contrast input[type="text"] {
+            background: black;
+            color: white;
+            border-color: white;
+        }
+        .high-contrast .btn, .high-contrast .small-btn {
+            background: yellow;
+            color: black;
+            border: 2px solid yellow;
+        }
+        .high-contrast .btn:hover {
+            background: #ffff00cc;
+        }
+        .high-contrast .error {
+            background: #500;
+            color: yellow;
+            border: 2px solid red;
+        }
+        .high-contrast .footer {
+            color: yellow;
+        }
 
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .stats-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="accessibility-controls" role="complementary" aria-label="Contrôles d'accessibilité">
+        <strong>Accessibilité:</strong><br>
+        <button onclick="changeFontSize('increase')" aria-label="Augmenter la taille du texte">A+</button>
+        <button onclick="changeFontSize('decrease')" aria-label="Diminuer la taille du texte">A-</button>
+        <button onclick="toggleHighContrast()" aria-label="Activer/Désactiver le contraste élevé">Contraste</button>
+    </div>
+
+    <div class="container" role="main">
+        <h1>VoyageIA</h1>
+        <p class="subtitle">Découvrez votre prochaine destination parmi 111 villes du monde</p>
+        
+        <div class="stats-bar" role="region" aria-label="Statistiques de l'application">
+            <div class="stat-item">
+                <div class="stat-number">{{ stats['total_users'] }}</div>
+                <div class="stat-label">Utilisateurs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ stats['total_recommendations'] }}</div>
+                <div class="stat-label">Recommandations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">111</div>
+                <div class="stat-label">Destinations</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Droits RGPD intégrés</div>
+            </div>
+        </div>
+        
+        <div class="info-box" role="region" aria-label="Information sur le traitement des données">
+            <h3>ℹ️ Transparence & Protection des données (RGPD)</h3>
+            <p><strong>Responsable du traitement :</strong> VoyageIA, projet académique IA & RGPD (Nexa Digital School)</p>
+            <p><strong>Finalité :</strong> Recommandation personnalisée de destinations (Art. 5.1.b RGPD)</p>
+            <p><strong>Données collectées :</strong> Préférences de voyage + Pseudonyme optionnel (minimisation - Art. 5.1.c)</p>
+            <p><strong>Base légale :</strong> Consentement explicite (Art. 6.1.a RGPD)</p>
+            <p><strong>Durée de conservation :</strong> jusqu'à votre demande d'effacement (Art. 17 RGPD)</p>
+            <p><strong>Vos droits :</strong> Accès (Art. 15), Rectification (Art. 16), Effacement (Art. 17), Portabilité (Art. 20)</p>
+            <p><strong>Sécurité :</strong> Pseudonymisation par hachage SHA-256</p>
+        </div>
+
+        <div class="consent-section" role="region" aria-label="Section consentement">
+            <h3>Consentement RGPD (Obligatoire)</h3>
+            <p style="margin-bottom: 15px;">Conformément à l'article 7 du RGPD, nous avons besoin de votre consentement explicite.</p>
+            
+            <div class="consent-checkbox">
+                <input type="checkbox" id="consent1" name="consent1" required aria-required="true">
+                <label for="consent1" style="font-weight: normal;">
+                    J'accepte que mes préférences soient traitées par l'algorithme IA (Art. 6.1.a RGPD)
+                </label>
+            </div>
+            
+            <div class="consent-checkbox">
+                <input type="checkbox" id="consent2" name="consent2" required aria-required="true">
+                <label for="consent2" style="font-weight: normal;">
+                    J'ai été informé(e) de mes droits et peux retirer mon consentement à tout moment (Art. 7.3 RGPD)
+                </label>
+            </div>
+            
+            <div class="consent-checkbox">
+                <input type="checkbox" id="consent3" name="consent3" required aria-required="true">
+                <label for="consent3" style="font-weight: normal;">
+                    Je comprends que mes données sont pseudonymisées (Art. 32 RGPD)
+                </label>
+            </div>
+        </div>
+
+        <form id="recommendationForm" aria-label="Formulaire de recommandation">
+            <div class="form-group">
+                <label for="pseudo">Pseudonyme (optionnel) :</label>
+                <input type="text" id="pseudo" name="pseudo" 
+                        placeholder="Ex: Voyageur2025" 
+                        maxlength="50"
+                        value=""> 
+                <small style="color: #666;">Permet de retrouver votre historique. Pseudonymisé par hachage SHA-256.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="budget">Budget du voyage :</label>
+                <select id="budget" name="budget" required>
+                    <option value="">-- Sélectionnez --</option>
+                    <option value="faible"> Faible (< 500€)</option>
+                    <option value="moyen"> Moyen (500€ - 1500€)</option>
+                    <option value="élevé">Élevé (1500€ - 3000€)</option>
+                    <option value="très élevé"> Très élevé (> 3000€)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="climat">Climat préféré :</label>
+                <select id="climat" name="climat" required>
+                    <option value="">-- Sélectionnez --</option>
+                    <option value="chaud">Chaud (> 30°C)</option>
+                    <option value="tempéré">Tempéré (15-25°C)</option>
+                    <option value="froid">Froid (< 15°C)</option>
+                    <option value="tropical">Tropical (chaud et humide)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="activite">Catégorie principale :</label>
+
+                <input type="text" id="searchCat" placeholder="🔍 Rechercher une catégorie..." onkeyup="filterCategories()" style="margin-bottom:8px; width:100%; padding:6px;">
+
+                <select id="activite" name="activite" size="8" required style="width:100%;">
+                    <option value="">-- Sélectionnez une catégorie --</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat | capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <script>
+            function filterCategories() {
+                const input = document.getElementById("searchCat");
+                const filter = input.value.toLowerCase();
+                const select = document.getElementById("activite");
+                const options = select.getElementsByTagName("option");
+
+                for (let i = 0; i < options.length; i++) {
+                    const txtValue = options[i].textContent || options[i].innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1 || options[i].value === "") {
+                        options[i].style.display = "";
+                    } else {
+                        options[i].style.display = "none";
+                    }
+                }
+            }
+            </script>
+
+
+
+            <div class="form-group">
+                <label for="duree">Durée du séjour :</label>
+                <select id="duree" name="duree" required>
+                    <option value="">-- Sélectionnez --</option>
+                    <option value="court">Court (< 5 jours)</option>
+                    <option value="moyen">Moyen (5-10 jours)</option>
+                    <option value="long">Long (> 10 jours)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="continent">Continent préféré :</label>
+                <select id="continent" name="continent" required>
+                    <option value="">-- Sélectionnez --</option>
+                    <option value="Europe">🇪🇺 Europe</option>
+                    <option value="Asie">Asie</option>
+                    <option value="Amérique du nord">Amérique du nord</option>
+                    <option value="Amérique du sud">Amérique du sud</option>
+                    <option value="Océanie">Océanie</option>
+                </select>
+            </div>
+            
+            <button type="submit" id="submitBtn" class="btn">🚀 Trouver ma destination !</button>
+        </form>
+
+        {% if error_message and error_message != 'None' %}
+            <div class="error" role="alert">{{ error_message }}</div>
+        {% endif %}
+        
+        {% if recommendation_result and recommendation_result != 'None' %}
+            <div class="result" role="region" aria-label="Résultat de la recommandation">
+                <h2>🎉 Votre destination recommandée est :</h2>
+                <p>{{ recommendation_result }}</p>
+                <small style="color: #333;">(Confiance IA : <strong>{{ confidence_score }}%</strong>)</small>
+            </div>
+        {% endif %}
+
+        <div class="rights-section" role="region" aria-label="Gestion des droits RGPD">
+            <h3>⚖️ Exercer mes droits (RGPD)</h3>
+            <p>Pour exercer vos droits (Accès, Effacement, Portabilité), entrez le <strong>pseudonyme exact</strong> que vous avez utilisé ci-dessus ou votre identifiant haché.</p>
+            <div class="form-group">
+                <label for="rights-pseudo">Mon Pseudonyme/Identifiant :</label>
+                <input type="text" id="rights-pseudo" name="rights-pseudo" placeholder="Ex: Voyageur2025 ou 1d8a3f5b0c9e..." required>
+            </div>
+
+            <div class="rights-buttons">
+                <button type="button" class="small-btn" onclick="requestData()">📥 Droit d'Accès (Art. 15)</button>
+                <button type="button" class="small-btn" onclick="deleteData()">🗑️ Droit d'Effacement (Art. 17)</button>
+                <button type="button" class="small-btn" onclick="requestPortability()">📦 Droit à la Portabilité (Art. 20)</button>
+            </div>
+            <pre id="rights-result" style="white-space: pre-wrap; margin-top: 15px; background: #eee; padding: 10px; border-radius: 5px; text-align: left; overflow-x: auto;">Les résultats de votre requête (JSON) apparaîtront ici.</pre>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 VoyageIA - Projet Académique IA & RGPD.</p>
+        </div>
+        
+    </div>
+
+    <script>
+        let currentFontSize = 16;
+        function changeFontSize(action) {
+            if (action === 'increase' && currentFontSize < 24) currentFontSize++;
+            else if (action === 'decrease' && currentFontSize > 12) currentFontSize--;
+            document.body.style.fontSize = currentFontSize + 'px';
+        }
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('recommendationForm');
+            const consent1 = document.getElementById('consent1');
+            const consent2 = document.getElementById('consent2');
+            const consent3 = document.getElementById('consent3');
+            const submitBtn = document.getElementById('submitBtn');
+
+            function checkConsent() {
+                submitBtn.disabled = !(consent1.checked && consent2.checked && consent3.checked);
+            }
+
+            submitBtn.disabled = true;
+            consent1.addEventListener('change', checkConsent);
+            consent2.addEventListener('change', checkConsent);
+            consent3.addEventListener('change', checkConsent);
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (submitBtn.disabled) return;
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                submitBtn.textContent = 'Recherche en cours...';
+                submitBtn.disabled = true;
+
+                fetch('/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    const confidence = result.confidence || 0;
+                    const destination = result.destination || 'None';
+                    const error = result.error || 'None';
+
+                    window.location.replace(`/?result=${encodeURIComponent(destination)}&confidence=${confidence}&error=${encodeURIComponent(error)}`);
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    window.location.replace(`/?error=${encodeURIComponent("Erreur réseau ou interne.")}`);
+                })
+                .finally(() => {
+                     submitBtn.textContent = 'Trouver ma destination !';
+                     checkConsent(); 
+                });
+            });
+
+            // Fonctions RGPD
+            const rightsPseudoInput = document.getElementById('rights-pseudo');
+            const rightsResultPre = document.getElementById('rights-result');
+
+            function getIdentifier() {
+                const identifier = rightsPseudoInput.value.trim();
+                if (!identifier) {
+                    rightsResultPre.textContent = "Veuillez entrer votre pseudonyme ou l'identifiant haché pour continuer.";
+                    return null;
+                }
+                return identifier;
+            }
+
+            window.requestData = function() {
+                const identifier = getIdentifier();
+                if (!identifier) return;
+
+                rightsResultPre.textContent = "Recherche des données (Art. 15)...";
+                fetch('/rgpd/data-request', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ identifier: identifier }),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error) {
+                        rightsResultPre.textContent = "Erreur: " + result.error;
+                        rightsResultPre.style.color = '#cc0000';
+                    } else {
+                        rightsResultPre.textContent = JSON.stringify(result.data, null, 2);
+                        rightsResultPre.style.color = 'black';
+                    }
+                })
+                .catch(e => {
+                    rightsResultPre.textContent = "Erreur réseau lors de la requête d'accès.";
+                    rightsResultPre.style.color = '#cc0000';
+                });
+            }
+
+            window.deleteData = function() {
+                const identifier = getIdentifier();
+                if (!identifier || !confirm("Êtes-vous sûr de vouloir supprimer définitivement vos données ? Cette action est irréversible (Art. 17 RGPD).")) return;
+
+                rightsResultPre.textContent = "Suppression des données en cours...";
+                fetch('/rgpd/data-deletion', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ identifier: identifier }),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error) {
+                        rightsResultPre.textContent = "Erreur: " + result.error;
+                        rightsResultPre.style.color = '#cc0000';
+                    } else {
+                        rightsResultPre.textContent = result.message;
+                        rightsResultPre.style.color = 'green';
+                    }
+                })
+                .catch(e => {
+                    rightsResultPre.textContent = "Erreur réseau lors de la suppression.";
+                    rightsResultPre.style.color = '#cc0000';
+                });
+            }
+
+            window.requestPortability = function() {
+                const identifier = getIdentifier();
+                if (!identifier) return;
+
+                rightsResultPre.textContent = "Préparation des données pour la portabilité (format JSON - Art. 20)...";
+                fetch('/rgpd/data-request', { 
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ identifier: identifier }),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error) {
+                        rightsResultPre.textContent = "Erreur: " + result.error;
+                    } else {
+                        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(result.data, null, 2));
+                        const downloadAnchorNode = document.createElement('a');
+                        downloadAnchorNode.setAttribute("href", dataStr);
+                        downloadAnchorNode.setAttribute("download", "voyage_data_portability_" + identifier + ".json");
+                        document.body.appendChild(downloadAnchorNode);
+                        downloadAnchorNode.click();
+                        downloadAnchorNode.remove();
+                        rightsResultPre.textContent = "Téléchargement de vos données initié. (Art. 20 RGPD)";
+                    }
+                })
+                .catch(e => rightsResultPre.textContent = "Erreur réseau lors de la portabilité.");
+            }
+
+        });
+    </script>
+</body>
+</html>
