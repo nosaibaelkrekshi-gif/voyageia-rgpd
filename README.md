@@ -7,12 +7,18 @@
 
 La plupart des projets d'IA traitent le RGPD comme une case à cocher à la fin. Ici, chaque exigence est **codée dans l'application** : le consentement est enregistré comme preuve, les données sont pseudonymisées, et l'utilisateur peut consulter, récupérer ou effacer ses données en un clic.
 
+## Aperçu
+
+| Information et consentement | Préférences et exercice des droits |
+|---|---|
+| ![Consentement](captures/consentement.png) | ![Droits RGPD](captures/Droit%20RGPD.png) |
+
 ## Fonctionnalités
 
 **Côté utilisateur**
 - Choix de ses préférences : budget, climat, type d'activité, durée, continent.
-- Recommandation d'une destination parmi **110 villes**, avec un score de confiance.
-- Interface accessible : balisage pour les lecteurs d'écran et **mode contraste élevé**.
+- Recommandation d'une destination parmi **111 villes**, avec un score de confiance.
+- Interface accessible : balisage pour les lecteurs d'écran, taille du texte réglable et **mode contraste élevé**.
 
 **Côté conformité**
 
@@ -47,7 +53,8 @@ Application Flask (app.py)
 ├── templates/
 │   └── index.html                  # interface : formulaire, consentement, droits
 ├── Database/
-│   └── travel_destinations.csv     # 110 destinations : ville, pays, catégories, meilleure période
+│   └── travel_destinations.csv     # 111 destinations : ville, pays, catégories, meilleure période
+├── captures/                       # aperçu de l'application
 └── requirements.txt
 ```
 
@@ -66,7 +73,7 @@ Puis ouvrir http://127.0.0.1:5000 dans un navigateur.
 
 J'ai choisi de documenter honnêtement les limites de ce prototype :
 
-- **Données d'entraînement en partie simulées** : le fichier de destinations contient la ville, le pays et les catégories d'activités. Le budget, le climat et la durée sont générés aléatoirement selon le continent. Pour une vraie application, il faudrait des données réelles (coût de la vie, météo).
+- **Données d'entraînement en partie simulées, et une précision faible** : le fichier de destinations contient la ville, le pays et les catégories d'activités, mais le budget, le climat et la durée sont générés aléatoirement selon le continent. Résultat : le modèle obtient **5 % de précision** en test pour 111 destinations possibles. Il ne peut pas apprendre de vraie relation à partir d'attributs tirés au hasard. Ce prototype démontre donc l'**architecture RGPD**, pas la qualité de la recommandation. Pour une vraie application, il faudrait des données réelles (coût de la vie, météo) et une approche par similarité plutôt qu'une classification sur 111 classes.
 - **Pseudonymisation renforçable** : le pseudonyme saisi est encore conservé dans la table `users`. Il suffirait de ne stocker que son empreinte, et d'ajouter un « sel » secret au hachage pour empêcher de retrouver un pseudonyme en le devinant.
 - **Portabilité** : les données sont affichées au format JSON ; un bouton de téléchargement direct du fichier serait plus pratique.
 - **Droit de rectification (art. 16)** : il est mentionné dans l'information, mais pas encore implémenté.
@@ -78,4 +85,10 @@ Python · Flask · SQLite · scikit-learn · pandas · HTML / CSS / JavaScript
 
 ---
 
-👩‍💻 **Nosaiba Elkrekshi** · Master 2 Data & IA · [LinkedIn](https://www.linkedin.com/in/nosaiba-elkrekshi) · nosaiba.elkrekshi@gmail.com
+👩‍💻 **Nosaiba Elkrekshi** · 
+
+Master 2 Data & IA · 
+
+[LinkedIn](https://www.linkedin.com/in/nosaiba-elkrekshi) · 
+
+nosaiba.elkrekshi@gmail.com
